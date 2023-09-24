@@ -3,7 +3,8 @@ from rest_framework import routers
 
 from sm_activity.views import (
     ProfileViewSet,
-    PostViewSet, CommentViewSet,
+    PostViewSet,
+    CommentViewSet,
 )
 
 router = routers.DefaultRouter()
