@@ -43,11 +43,6 @@ class IsOwnerOrIfFollowerReadOnly(BasePermission):
             and request.user.profile in obj.followers.all()
         ):
             return True
-        if hasattr(obj, "author"):
-            return obj.author == request.user
-
-        if hasattr(obj, "owner"):
-            return obj.owner == request.user
 
         if hasattr(obj, "user"):
             return obj.user == request.user

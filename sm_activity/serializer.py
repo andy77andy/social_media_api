@@ -70,7 +70,7 @@ class LikePostSerializer(serializers.ModelSerializer):
     owner = serializers.CharField(source="owner.username", read_only=True)
 
     class Meta:
-        model = Comment
+        model = Post
         fields = ("title", "owner", "created_at",)
 
 

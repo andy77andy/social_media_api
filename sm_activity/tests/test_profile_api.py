@@ -143,21 +143,18 @@ class ProfileApiTest(TestCase):
         self.assertIn(serializer2.data["username"], response2[0]["username"])
         self.assertNotIn(serializer3.data, response)
 
-    # def test_forbidden_urls(self):
-    #     user2 = get_user_model().objects.create_user(
-    #         "test@test2.com", "test3234"
-    #     )
-    #     sample_profile(
-    #         user=self.user,
-    #         username="Test1",
-    #     )
-    #     sample_profile(
-    #         user=user2,
-    #         username="Test2",
-    #     )
-    #
-    #     response = self.client.get(like_url(profile_id=2))
-    #     print(like_url(profile_id=2))
-    #     print(Profile.objects.get(id=2).user)
-    #     print(response)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_forbidden_urls(self):
+        user2 = get_user_model().objects.create_user(
+            "test@test2.com", "test3234"
+        )
+        sample_profile(
+            user=self.user,
+            username="Test1",
+        )
+        sample_profile(
+            user=user2,
+            username="Test2",
+        )
+
+        response = self.client.get(like_url(profile_id=2))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

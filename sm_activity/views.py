@@ -1,5 +1,7 @@
 from datetime import datetime
 from django.db.models import Count
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated
@@ -28,7 +30,8 @@ class ProfileViewSet(
             return ProfileFollowSerializer
         return ProfileSerializer
 
-    @action(methods=["GET"], detail=True, url_path="liked_posts", permission_classes=(IsOwnerOrIfFollowerReadOnly, ))
+    @action(methods=["GET"], detail=True, url_path="liked_posts",
+            permission_classes=(IsOwnerOrIfFollowerReadOnly, ))
     def liked_posts(self, request, pk=None):
         user_profile = self.request.user.profile
 
@@ -84,6 +87,27 @@ class ProfileViewSet(
             queryset = queryset.filter(status__icontains=status_)
 
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "username",
+                type=OpenApiTypes.DATE,
+                description="Filter by username (ex. ?Joe)",
+            ),
+            OpenApiParameter(
+                "status",
+                type=OpenApiTypes.DATE,
+                description="Filter by status (ex. ?Active)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        this method is created for documentation, to use extend_schema
+        for filtering
+        """
+        return super().list(self, request, *args, **kwargs)
 
 
 class PostViewSet(
@@ -178,6 +202,27 @@ class PostViewSet(
             queryset = queryset.filter(created_at=post_date)
 
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "title",
+                type=OpenApiTypes.DATE,
+                description="Filter by title (ex. ?title=emmm..)",
+            ),
+            OpenApiParameter(
+                "created_at",
+                type=OpenApiTypes.DATE,
+                description="Filter by creation day (ex. ?date=2020-10-10)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        this method is created for documentation, to use extend_schema
+        for filtering
+        """
+        return super().list(self, request, *args, **kwargs)
 
 
 class CommentViewSet(
