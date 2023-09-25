@@ -43,38 +43,26 @@ def sample_post(**params):
 class CommentApiTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
-            "test@test.com", "test1234"
-        )
+        self.user = get_user_model().objects.create_user("test@test.com", "test1234")
         self.client.force_authenticate(self.user)
 
     def test_update_comment(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
         )
-        post = sample_post(
-            author=profile
-        )
+        post = sample_post(author=profile)
         profile_client = sample_profile(
             user=self.user,
             username="Test",
         )
-        payload = {
-            "body": "it's so dope!"
-        }
-        payload_1 = {
-            "body": "what a mess!!"
-        }
+        payload = {"body": "it's so dope!"}
+        payload_1 = {"body": "what a mess!!"}
 
         response = self.client.post(comment_url(post.id), payload)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        payload_1 = {
-            "body": "what a mess!!"
-        }
+        payload_1 = {"body": "what a mess!!"}
         comment = Comment.objects.get(id=1)
         response_1 = self.client.put(detail_url(1), payload_1)
         comment.refresh_from_db()
@@ -82,23 +70,17 @@ class CommentApiTest(TestCase):
         self.assertEqual(comment.body, payload_1["body"])
 
     def test_delete_comment(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
         )
-        post = sample_post(
-            author=profile
-        )
+        post = sample_post(author=profile)
         profile_client = sample_profile(
             user=self.user,
             username="Test",
         )
-        payload = {
-            "body": "it's so dope!"
-        }
+        payload = {"body": "it's so dope!"}
 
         self.client.post(comment_url(post.id), payload)
         response_1 = self.client.delete(detail_url(1))

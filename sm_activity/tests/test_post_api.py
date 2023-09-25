@@ -7,8 +7,13 @@ from rest_framework.test import APIClient
 
 
 from sm_activity.models import Profile, Post
-from sm_activity.serializer import ProfileSerializer, ProfileDetailSerializer, ProfileFollowSerializer, \
-    PostDetailSerializer, PostSerializer
+from sm_activity.serializer import (
+    ProfileSerializer,
+    ProfileDetailSerializer,
+    ProfileFollowSerializer,
+    PostDetailSerializer,
+    PostSerializer,
+)
 from user.models import User
 
 POSTS_URL = reverse("sm_activity:post-list")
@@ -58,16 +63,12 @@ class UnAuthProfileApiTest(TestCase):
         self.client = APIClient()
 
     def test_forbidden_urls(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
         )
-        sample_post(
-            author=profile
-        )
+        sample_post(author=profile)
 
         response = self.client.get(POSTS_URL)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -77,7 +78,8 @@ class PostApiTest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            "test@test.com", "test1234"
+            "test@test.com",
+            "test1234"
             # , is_staff=True
         )
 
@@ -88,13 +90,8 @@ class PostApiTest(TestCase):
             user=self.user,
             username="Test",
         )
-        post = sample_post(
-            author=profile_client
-        )
-        payload = {
-            "title": "new_title",
-            "body": "new_body"
-        }
+        post = sample_post(author=profile_client)
+        payload = {"title": "new_title", "body": "new_body"}
         response = self.client.put(detail_url(post.id), payload)
         serializer = PostDetailSerializer(post)
         post.refresh_from_db()
@@ -102,9 +99,7 @@ class PostApiTest(TestCase):
         self.assertEqual(serializer.data["body"], payload["body"])
 
     def test_update_post_if_not_owner(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
@@ -113,13 +108,8 @@ class PostApiTest(TestCase):
             user=self.user,
             username="Test",
         )
-        post = sample_post(
-            author=profile
-        )
-        payload = {
-            "title": "new_title",
-            "body": "new_body"
-        }
+        post = sample_post(author=profile)
+        payload = {"title": "new_title", "body": "new_body"}
         response = self.client.put(detail_url(post.id), payload)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -128,16 +118,12 @@ class PostApiTest(TestCase):
             user=self.user,
             username="Test",
         )
-        post = sample_post(
-            author=profile_client
-        )
+        post = sample_post(author=profile_client)
         response = self.client.delete(detail_url(post.id))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_like_action(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
@@ -146,9 +132,7 @@ class PostApiTest(TestCase):
             user=self.user,
             username="Test",
         )
-        post = sample_post(
-            author=profile
-        )
+        post = sample_post(author=profile)
 
         response = self.client.post(like_url(post.id))
         serializer1 = PostDetailSerializer(post)
@@ -156,9 +140,7 @@ class PostApiTest(TestCase):
         self.assertIn(profile_client.username, serializer1.data["likes"])
 
     def test_dislike_action(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
@@ -167,9 +149,7 @@ class PostApiTest(TestCase):
             user=self.user,
             username="Test",
         )
-        post = sample_post(
-            author=profile
-        )
+        post = sample_post(author=profile)
 
         response = self.client.post(dislike_url(post.id))
         serializer1 = PostDetailSerializer(post)
@@ -177,23 +157,17 @@ class PostApiTest(TestCase):
         self.assertIn(profile_client.username, serializer1.data["dislikes"])
 
     def test_comment_action(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile = sample_profile(
             user=user2,
             username="Test2",
         )
-        post = sample_post(
-            author=profile
-        )
+        post = sample_post(author=profile)
         profile_client = sample_profile(
             user=self.user,
             username="Test",
         )
-        payload = {
-            "body": "test"
-        }
+        payload = {"body": "test"}
 
         response = self.client.post(comment_url(post.id), payload)
         serializer1 = PostSerializer(post)

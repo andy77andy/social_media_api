@@ -15,14 +15,31 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    followers = serializers.IntegerField(source="followers.count", read_only=True, )
-    follow_to = serializers.IntegerField(source="follow_to.count", read_only=True, )
+    followers = serializers.IntegerField(
+        source="followers.count",
+        read_only=True,
+    )
+    follow_to = serializers.IntegerField(
+        source="follow_to.count",
+        read_only=True,
+    )
     comments_count = serializers.IntegerField(read_only=True)
     posts_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Profile
-        fields = ("id", "username", "user", "status", "image", "bio", "followers", "follow_to", "posts_count", "comments_count", )
+        fields = (
+            "id",
+            "username",
+            "user",
+            "status",
+            "image",
+            "bio",
+            "followers",
+            "follow_to",
+            "posts_count",
+            "comments_count",
+        )
 
 
 class ProfileFollowSerializer(serializers.ModelSerializer):
@@ -31,7 +48,10 @@ class ProfileFollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ("username", "image",)
+        fields = (
+            "username",
+            "image",
+        )
 
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
@@ -40,11 +60,21 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
     posts = serializers.SerializerMethodField()
 
     def get_posts(self, obj) -> list:
-        return [post.title for post in obj.posts.all()] 
+        return [post.title for post in obj.posts.all()]
 
     class Meta:
         model = Profile
-        fields = ("id", "username", "user", "status", "image", "followers", "follow_to", "posts", "bio")
+        fields = (
+            "id",
+            "username",
+            "user",
+            "status",
+            "image",
+            "followers",
+            "follow_to",
+            "posts",
+            "bio",
+        )
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -55,7 +85,17 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ("id", "title", "body", "author", "created_at", "comments", "image", "likes", "dislikes",)
+        fields = (
+            "id",
+            "title",
+            "body",
+            "author",
+            "created_at",
+            "comments",
+            "image",
+            "likes",
+            "dislikes",
+        )
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
@@ -63,7 +103,11 @@ class CommentPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ("body", "owner", "created_at", )
+        fields = (
+            "body",
+            "owner",
+            "created_at",
+        )
 
 
 class LikePostSerializer(serializers.ModelSerializer):
@@ -71,7 +115,11 @@ class LikePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ("title", "owner", "created_at",)
+        fields = (
+            "title",
+            "owner",
+            "created_at",
+        )
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
@@ -88,5 +136,13 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ("id", "title", "body", "author", "created_at", "comments", "likes", "dislikes", )
-
+        fields = (
+            "id",
+            "title",
+            "body",
+            "author",
+            "created_at",
+            "comments",
+            "likes",
+            "dislikes",
+        )

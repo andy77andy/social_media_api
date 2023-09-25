@@ -24,10 +24,16 @@ class Profile(models.Model):
         Active = "Active"
         Abandoned = "Long out of touch"
         Unknown = "Unknown"
+
     username = models.CharField(max_length=30, unique=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=30, choices=StatusChoices.choices)
-    followers = models.ManyToManyField("self", related_name="follow_to", symmetrical=False, blank=True, )
+    followers = models.ManyToManyField(
+        "self",
+        related_name="follow_to",
+        symmetrical=False,
+        blank=True,
+    )
     created_at = models.DateField(auto_now_add=True)
     image = models.ImageField(blank=True)
     bio = models.TextField(max_length=200)
@@ -36,7 +42,10 @@ class Profile(models.Model):
         return self.username
 
     class Meta:
-        ordering = ("-created_at", "status",)
+        ordering = (
+            "-created_at",
+            "status",
+        )
 
 
 class Post(models.Model):
@@ -57,6 +66,8 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
-    owner = models.ForeignKey(Profile, related_name="comments", on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        Profile, related_name="comments", on_delete=models.CASCADE
+    )
     body = models.TextField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)

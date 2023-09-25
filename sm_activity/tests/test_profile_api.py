@@ -7,7 +7,11 @@ from rest_framework.test import APIClient
 
 
 from sm_activity.models import Profile
-from sm_activity.serializer import ProfileSerializer, ProfileDetailSerializer, ProfileFollowSerializer
+from sm_activity.serializer import (
+    ProfileSerializer,
+    ProfileDetailSerializer,
+    ProfileFollowSerializer,
+)
 
 PROFILES_URL = reverse("sm_activity:profile-list")
 
@@ -37,9 +41,7 @@ class UnAuthProfileApiTest(TestCase):
         self.client = APIClient()
 
     def test_forbidden(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         sample_profile(
             user=user2,
             username="Test2",
@@ -52,16 +54,12 @@ class UnAuthProfileApiTest(TestCase):
 class ProfileApiTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
-            "test@test.com", "test1234"
-        )
+        self.user = get_user_model().objects.create_user("test@test.com", "test1234")
 
         self.client.force_authenticate(self.user)
 
     def test_follow_and_permission(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile_1 = sample_profile(
             user=self.user,
             username="Test1",
@@ -95,9 +93,7 @@ class ProfileApiTest(TestCase):
         self.assertIn(serializer1.data["bio"], payload["bio"])
 
     def test_update_profile_forbidden(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
         profile_1 = sample_profile(
             user=user2,
             username="Test1",
@@ -111,27 +107,15 @@ class ProfileApiTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_filtering_profiles(self):
-        user2 = get_user_model().objects.create_user(
-            "test@test2.com", "test3234"
-        )
-        user3 = get_user_model().objects.create_user(
-            "test@test3.com", "test3334"
-        )
-        profile_1 = sample_profile(
-            user=self.user,
-            username="Test1",
-            status="Abandoned"
-        )
+        user2 = get_user_model().objects.create_user("test@test2.com", "test3234")
+        user3 = get_user_model().objects.create_user("test@test3.com", "test3334")
+        profile_1 = sample_profile(user=self.user, username="Test1", status="Abandoned")
         profile_2 = sample_profile(
             user=user2,
             username="Test2",
             created_at="2023-08-18",
         )
-        profile_3 = sample_profile(
-            user=user3,
-            username="Test3",
-            status="None"
-        )
+        profile_3 = sample_profile(user=user3, username="Test3", status="None")
 
         response = self.client.get(PROFILES_URL, {"username": "Test1"}).json()
         response2 = self.client.get(PROFILES_URL, {"status": "Active"}).json()
@@ -139,6 +123,22 @@ class ProfileApiTest(TestCase):
         serializer2 = ProfileSerializer(profile_2, many=False)
         serializer3 = ProfileSerializer(profile_3, many=False)
 
-        self.assertEqual(serializer1.data["username"], response[0]["username"] )
+        self.assertEqual(serializer1.data["username"], response[0]["username"])
         self.assertIn(serializer2.data["username"], response2[0]["username"])
         self.assertNotIn(serializer3.data, response)
+
+    def test_forbidden_urls(self):
+        user2 = get_user_model().objects.create_user(
+            "test@test2.com", "test3234"
+        )
+        sample_profile(
+            user=self.user,
+            username="Test1",
+        )
+        sample_profile(
+            user=user2,
+            username="Test2",
+        )
+        response = self.client.get(like_url(profile_id=2))
+        print(response)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
