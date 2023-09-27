@@ -47,12 +47,12 @@ class ProfileViewSet(
         methods=["GET"],
         detail=True,
         url_path="liked_posts",
-        permission_classes=(IsOwnerOrIfFollowerReadOnly,),
+        permission_classes=[IsOwnerOrIfFollowerReadOnly,],
     )
     def liked_posts(self, request, pk=None):
-        user_profile = self.request.user.profile
-
-        posts = user_profile.liked_posts.all()
+        print(self.get_permissions())
+        profile_for_action = self.get_object()
+        posts = profile_for_action.liked_posts.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -62,9 +62,9 @@ class ProfileViewSet(
         url_path="all_posts",
     )
     def all_posts(self, request, pk=None):
-        user_profile = self.request.user.profile
 
-        posts = user_profile.posts.all()
+        profile_for_action = Profile.objects.get(pk=pk)
+        posts = profile_for_action.posts.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

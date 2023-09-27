@@ -14,6 +14,6 @@ router.register("comments", CommentViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    ]
+]
 
 app_name = "sm_activity"

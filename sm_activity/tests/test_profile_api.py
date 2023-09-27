@@ -139,6 +139,6 @@ class ProfileApiTest(TestCase):
             user=user2,
             username="Test2",
         )
-        response = self.client.get(like_url(profile_id=2))
-        print(response)
+
+        response = self.client.get(like_url(profile_id=user2.profile.id))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
