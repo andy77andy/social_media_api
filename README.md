@@ -27,7 +27,7 @@ password: n1n2n3n4
 
 ## Features
 1. Authentication abilities for Admin/User
-2. Managing permissions, abilities for posting, liking, disliking, following and etc.
+2. Managing permissions, abilities for posting, liking, disliking, following etc.
 
 
 
