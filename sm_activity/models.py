@@ -26,7 +26,7 @@ class Profile(models.Model):
         Unknown = "Unknown"
 
     username = models.CharField(max_length=30, unique=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     status = models.CharField(max_length=30, choices=StatusChoices.choices)
     followers = models.ManyToManyField(
         "self",
