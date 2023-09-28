@@ -2,7 +2,7 @@
 
 # Social media api
 
-- Project realize social media app 
+- Project provided social media app 
  
 [//]: # (## Check it out!)
 
