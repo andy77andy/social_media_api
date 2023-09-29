@@ -35,7 +35,6 @@ class IsOwnerOrIfAuthenticatedReadOnly(BasePermission):
 
 class IsOwnerOrIfFollowerReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
-        print(request.user)
         if (
             request.method in SAFE_METHODS
             and request.user
