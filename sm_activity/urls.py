@@ -1,4 +1,3 @@
-from django.urls import path, include
 from rest_framework import routers
 
 from sm_activity.views import (
@@ -12,8 +11,6 @@ router.register("profiles", ProfileViewSet)
 router.register("posts", PostViewSet)
 router.register("comments", CommentViewSet)
 
-urlpatterns = [
-    path("", include(router.urls)),
-]
+urlpatterns = router.urls
 
 app_name = "sm_activity"

@@ -3,7 +3,7 @@ from django.db.models import Count
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status, mixins
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -50,7 +50,6 @@ class ProfileViewSet(
         permission_classes=[IsOwnerOrIfFollowerReadOnly,],
     )
     def liked_posts(self, request, pk=None):
-        print(self.get_permissions())
         profile_for_action = self.get_object()
         posts = profile_for_action.liked_posts.all()
         serializer = PostSerializer(posts, many=True)
@@ -59,10 +58,9 @@ class ProfileViewSet(
     @action(
         methods=["GET"],
         detail=True,
-        url_path="all_posts",
+        url_name="posts",
     )
-    def all_posts(self, request, pk=None):
-
+    def posts(self, request, pk=None):
         profile_for_action = Profile.objects.get(pk=pk)
         posts = profile_for_action.posts.all()
         serializer = PostSerializer(posts, many=True)
@@ -71,7 +69,7 @@ class ProfileViewSet(
     @action(
         methods=["POST"],
         detail=True,
-        url_path="follow",
+        url_name="follow",
     )
     def follow(self, request, pk=None):
         user_profile = self.request.user.profile
@@ -99,7 +97,6 @@ class ProfileViewSet(
     def get_queryset(self):
         username = self.request.query_params.get("username")
         status_ = self.request.query_params.get("status")
-
         queryset = self.queryset
 
         if username:

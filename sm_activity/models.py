@@ -1,10 +1,8 @@
 import os
 import uuid
 
-from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.text import slugify
-from rest_framework.permissions import IsAuthenticated
 
 from user.models import User
 
@@ -13,10 +11,10 @@ def image_file_path(instance, filename):
     _, extension = os.path.splitext(filename)
     if isinstance(instance, Profile):
         filename = f"{slugify(instance.username)}-{uuid.uuid4()}{extension}"
-        return os.path.join("uploads/profiles/", filename)
+        return os.path.join("uploads", "profiles", filename)
     elif isinstance(instance, Post):
         filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
-        return os.path.join("uploads/posts/", filename)
+        return os.path.join("uploads", "posts", filename)
 
 
 class Profile(models.Model):
