@@ -9,12 +9,13 @@ from user.models import User
 
 def image_file_path(instance, filename):
     _, extension = os.path.splitext(filename)
+    basename = ""
     if isinstance(instance, Profile):
-        filename = f"{slugify(instance.username)}-{uuid.uuid4()}{extension}"
-        return os.path.join("uploads", "profiles", filename)
+        basename = instance.username
     elif isinstance(instance, Post):
-        filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
-        return os.path.join("uploads", "posts", filename)
+        basename = instance.title
+    filename = f"{slugify(basename)}-{uuid.uuid4()}{extension}"
+    return os.path.join("uploads", f"{instance.__class__.__name__}s", filename)
 
 
 class Profile(models.Model):
